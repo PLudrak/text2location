@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Lokalizator opisowy</title>
+</head>
+<body>
+  <h1>Opisz miejsce</h1>
+  <form method="POST">
+    <textarea name="description" rows="6" cols="60" placeholder="Np. Pomnik, biały budynek, Żabka..."></textarea><br><br>
+    <input type="submit" value="Szukaj">
+  </form>
+
+  {% if locations %}
+    <h2>Wyniki:</h2>
+    <table border="1" cellpadding="5">
+      <tr><th>Słowo kluczowe</th><th>Szerokość</th><th>Długość</th></tr>
+      {% for loc in locations %}
+        <tr>
+          <td>{{ loc.keyword }}</td>
+          <td>{{ loc.lat }}</td>
+          <td>{{ loc.lon }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% endif %}
+</body>
+</html>

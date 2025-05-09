@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, render_template
 import requests
 
 app = Flask(__name__)
@@ -13,17 +13,16 @@ def build_query(keyword):
         node["name"~"{keyword}", i];
         node["shop"~"{keyword}", i];
         node["amenity"~"{keyword}", i];
-        node["tourism~"{keyword}", i];
+        node["tourism"~"{keyword}", i];
         node["historic"~"{keyword}", i];
     );
     out center
     """
 
 
-@app.route("/locate", methods=["POST"])
+@app.route("/", methods=["GET", "POST"])
 def locate():
-    data = request.get_json()
-    description = data.get("description", "")
+    description = request.form.get("description", "")
     keywords = extract_keywords(description)  # do zaimplementowania
 
     locations = []
@@ -35,12 +34,19 @@ def locate():
             elements = response.json().get("elements", [])
             for el in elements:
                 lat = el.get("lat") or el.get("center", {}).get("lat")
-                lon = el.get("lat") or el.get("center", {}).get("lon")
+                lon = el.get("lon") or el.get("center", {}).get("lon")
                 if lat and lon:
                     locations.append({"keyword": keyword, "lat": lat, "lon": lon})
-    return jsonify(locations)
+
+    if locations:
+        print(f"locations {locations}")
+    return render_template("index.html", locations=locations)
 
 
 def extract_keywords(text):
     # Tymczasowo
     return ["pomnik", "Żabka", "Budynek"]
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
